@@ -3,6 +3,70 @@ Some easy good practices of programming to use and improve your skills. Speciall
 
 If you want to contribute, just pull request your contribution, I will be glad to read and approve :).
 
+# Readability Matters
+## Don't abbreviate variables, constants or methods names
+If you abbreviate some of they, STOP, stop doing that. Write full variable name, there's no problem with that. Abbreviate variable is awful, want to know why?
+- It's can make sense to you, at moment you write variable, next week you will forgget what that abbreviation means;
+- If is hard to you to remember imagine to other developers, they will not know what your variable means;
+- WTF iDbCReO means? databaseCarReadOnly? doubleCoubleReadyOwner? No one knows, so stop use that;
+
+## Use self descriptive variable names
+First step is stop to abbreviate, but it doesn't help if you write non-sense variable names. For a moment, stop worrying about variable length and start worrying about write variable names understandable. So, instead of:
+```csharp
+  public void SendEmail(string e)
+  {
+    var a = "myemail@myprovider.com";
+    var s = new Smtp();
+    s.Send(string.IsNullOrEmpty(e) ? a : e);
+  }
+```
+You can write:
+```csharp
+  public void SendEmail(string destinationEmailAddress)
+  {
+    const string DEFAULT_EMAIL = "myemail@myprovider.com";
+    var smtpClient = new Smtp();
+    smtpClient.Send(string.IsNullOrEmpty(destinationEmailAddress) ? DEFAULT_EMAIL : destinationEmailAddress)
+  }
+```
+
+## Stop using long conditions inside if
+Look to a if that has a lot of operators and variables envolved is really really annoying. Keep in mind that you, or other developer, can be stressed and tired. Also he can be looking to a bad code (large code), debugging stepping a lot of variables. And then, he look to a if that you wrote with a lot of variables:
+```python
+   if ((response is not None and response.OK and 'destination_email' in response and response['destination_email']) or DEFAULT_DESTINATION_EMAIL) and config.send_email and client.want_receive_email:
+    smtp.send_email(email_content)
+```
+Look to all that cheddar! You, and others, have to read and interpret a long long boolean condition to understand what are you testing for. A really really simple way to avoid this is to set a variable that describe what are you testing:
+```python
+  should_send_email = ((response is not None and response.OK and 'destination_email' in response and response['destination_email']) or DEFAULT_DESTINATION_EMAIL) and config.send_email and client.want_receive_email
+  
+  if should_send_email:
+    smtp.send_email(email_content)
+```
+You moved your if logic to a variable, so you can look to code and think "Ok, if that should send email, that code will be executed", if you want to understand how your code is checking if email must be send, you can go back and read variable attribution, but in most cases you will just need to know what if is testing.
+
+## Stop using magic numbers, or magic strings:
+First of all, what are magic numbers?
+```python
+  hours = seconds_delta/3600
+```
+```python
+  acceleration = (milliseconds_delta/1000) * 9.807
+```
+In cases above, 3600, 1000 and 9.807 are magic numbers. Some people may know what they are, some people don't. Instead, move your magic numbers and strings to constants and you will improve your code readability a lot, also, you can reuse this belong all your code and if you need to change that value you will need to change at one, and only one, point:
+```python
+  ONE_HOUR_IN_SECONDS = 3600
+  
+  hours = seconds_delta/ONE_HOUR_IN_SECONDS
+```
+```python
+  ONE_SECOND_IN_MILLISECONDS = 1000
+  EARTH_GRAVITY = 10
+  
+  acceleration = (milliseconds_delta/ONE_SECOND_IN_MILLISECONDS) * EARTH_GRAVITY
+```
+In the example where we use earth gravity we discovered that earth gravity is not 10, but 9.807, there's no need to search code looking for 10 and interpreting if that 10 means earth gravity. Using constant you only need to change one point of code and now your code uses correct earth gravity value.
+
 # Frontend good practices
 ## Decouple CSS from Javascript
 This is really really easy to do, and improve a lot the mantainability of your code. Just add js- prefix to classes that will be used by javascript. Simple as that, stop select element by id, or by css class, select by your new and fresh js- prefixed class.
