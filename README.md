@@ -87,9 +87,9 @@ You can use some JS tricks and simplify your code:
   input && sendInputToServer(input);
 ```
 
-> Remember, boolean expressions are avaliated from left to right.
-> False and something else is always false, if first condition is false, js (and most languages) don't execute second condition.
-> Same happen to OR operator, True and something else is True, so if first value is true, second is not executed
+> Remember, boolean expressions are evaluated from left to right.
+> False and something else is always false, if first condition is false, js (and most languages) doesn't even run second condition.
+> Same happen to OR operator, True or something else is True, so if first value is true, second is not executed
 ```javascript
   //some js code
   function getTextOrDefault(someText):
